@@ -10,7 +10,27 @@ import List from "./components/List";
 
 import "./Todo.css";
 
-const store = createStore(listReducer);
+
+const SAVED_ITEMS = 'savedItems';
+
+function persistState(state){
+  localStorage.setItem(SAVED_ITEMS,JSON.stringify(state));
+}
+
+function loadState(){
+  const actualState = localStorage.getItem(SAVED_ITEMS);
+
+  if(actualState)
+  return JSON.parse(actualState);
+
+  return [];
+}
+
+const store = createStore(listReducer, loadState());
+
+store.subscribe(()=>{
+  persistState(store.getState());
+});
 
 function App() {
   const [showModal, setShowModal] = useState(false);
